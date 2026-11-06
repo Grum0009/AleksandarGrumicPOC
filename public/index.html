@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Aleksandar's Food Store</title>
+
+    <!-- Minimal CSS styling for the webpage and table -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        #message {
+            margin-top: 15px;
+        }
+
+        .disclaimer {
+            margin-top: 30px;
+            font-size: 13px;
+            color: #666;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <!-- Main webpage heading -->
+    <h1>Welcome to My Food Store</h1>
+
+    <p>Here are the available food products and their prices.</p>
+
+    <!-- Table displaying food products -->
+    <table>
+
+        <!-- Table headings -->
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Food Name</th>
+                <th>Price ($)</th>
+            </tr>
+        </thead>
+
+        <!-- JavaScript will insert food products here -->
+        <tbody id="foodTable">
+
+        </tbody>
+
+    </table>
+
+    <!-- Displays loading, success, or error messages -->
+    <p id="message">Loading food products...</p>
+
+    <!-- Student work disclaimer -->
+    <p class="disclaimer">
+        Disclaimer: This application is student work created
+        solely for demonstrating web development skills.
+        It is for educational and demonstration purposes only.
+    </p>
+
+    <!-- JavaScript to fetch and display food products -->
+    <script>
+
+        // Function to retrieve food products from the backend.
+        async function loadFoods() {
+
+            // Find the table body and message elements.
+            const table = document.getElementById("foodTable");
+            const message = document.getElementById("message");
+
+            try {
+
+                // Send a GET request to the backend API.
+                const response = await fetch("/foods");
+
+                // Check if the server returned a successful response.
+                if (!response.ok) {
+                    throw new Error("Unable to retrieve food products.");
+                }
+
+                // Convert the JSON response into JavaScript data.
+                const foods = await response.json();
+
+                // Clear the table before displaying the products.
+                table.innerHTML = "";
+
+                // Loop through each food product.
+                foods.forEach(food => {
+
+                    // Create a new table row.
+                    const row = document.createElement("tr");
+
+                    // Create the ID cell.
+                    const idCell = document.createElement("td");
+                    idCell.textContent = food.id;
+
+                    // Create the food name cell.
+                    const nameCell = document.createElement("td");
+                    nameCell.textContent = food.name;
+
+                    // Create the price cell.
+                    const priceCell = document.createElement("td");
+                    priceCell.textContent = food.price.toFixed(2);
+
+                    // Add the cells to the table row.
+                    row.appendChild(idCell);
+                    row.appendChild(nameCell);
+                    row.appendChild(priceCell);
+
+                    // Add the completed row to the table.
+                    table.appendChild(row);
+
+                });
+
+                // Display a success message.
+                message.textContent =
+                    "Successfully loaded " + foods.length + " food products.";
+
+                // Display the retrieved data in the browser console.
+                console.log("Food products loaded:", foods);
+
+            } catch (error) {
+
+                // Display an error message if something goes wrong.
+                message.textContent = "Error: " + error.message;
+
+                // Log the error for debugging.
+                console.error("Error loading food products:", error);
+
+            }
+        }
+
+        // Run the function when the webpage loads.
+        loadFoods();
+
+    </script>
+
+</body>
+
+</html>
